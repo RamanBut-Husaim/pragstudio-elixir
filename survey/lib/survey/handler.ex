@@ -5,9 +5,16 @@ defmodule Survey.Handler do
     |> rewrite_path
     |> log
     |> route
+    |> emojify
     |> track
     |> format_response
   end
+
+  def emojify(%{ status: 200, resp_body: resp_body } = conv) do
+    %{ conv | resp_body: "^___^\n #{resp_body} \n^___^"}
+  end
+
+  def emojify(conv), do: conv
 
   def track(%{status: 404, path: path} = conv) do
     IO.puts("Warning: #{path} is on the loose!")
