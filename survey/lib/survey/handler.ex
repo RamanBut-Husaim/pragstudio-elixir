@@ -2,10 +2,29 @@ defmodule Survey.Handler do
   def handle(request) do
     request
     |> parse
+    |> rewrite_path
     |> log
     |> route
+    |> track
     |> format_response
   end
+
+  def track(%{status: 404, path: path} = conv) do
+    IO.puts("Warning: #{path} is on the loose!")
+    conv
+  end
+
+  def track(conv), do: conv
+
+  def rewrite_path(%{ path: "/wildlife" } = conv) do
+    %{ conv | path: "/wildthings" }
+  end
+
+  def rewrite_path(%{ path: "/bears?id=" <> id } = conv) do
+    %{ conv | path: "/bears/#{id}" }
+  end
+
+  def rewrite_path(conv), do: conv
 
   def log(conv), do: IO.inspect(conv)
 
@@ -124,6 +143,46 @@ IO.puts(response)
 
 request = """
 GET /bears/1 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+expected_response = """
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 20
+
+Bears, Lions, Tigers
+"""
+
+response = Survey.Handler.handle(request)
+
+IO.puts(response)
+
+request = """
+GET /wildlife HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+expected_response = """
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 20
+
+Bears, Lions, Tigers
+"""
+
+response = Survey.Handler.handle(request)
+
+IO.puts(response)
+
+request = """
+GET /bears?id=2 HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
