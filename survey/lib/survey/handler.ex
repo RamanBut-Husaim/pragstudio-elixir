@@ -1,4 +1,6 @@
 defmodule Survey.Handler do
+  require Logger
+
   def handle(request) do
     request
     |> parse
@@ -17,7 +19,7 @@ defmodule Survey.Handler do
   def emojify(conv), do: conv
 
   def track(%{status: 404, path: path} = conv) do
-    IO.puts("Warning: #{path} is on the loose!")
+    Logger.warn "#{path} is on the loose!"
     conv
   end
 
@@ -30,7 +32,9 @@ defmodule Survey.Handler do
   end
 
   def rewrite_path_captures(conv, %{"thing" => thing, "id" => id}) do
-    %{ conv | path: "/#{thing}/#{id}" }
+    new_path = "/#{thing}/#{id}"
+    Logger.info "rewriting '#{conv.path}' into '#{new_path}'"
+    %{ conv | path: new_path }
   end
 
   def rewrite_path_captures(conv, nil), do: conv
