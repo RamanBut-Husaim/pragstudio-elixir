@@ -50,6 +50,10 @@ defmodule Survey.Handler do
     }
   end
 
+  def route(%{method: "DELETE", path: "/bears/" <> _id} = conv) do
+    %{ conv | status: 403, resp_body: "Bears must never be deleted!"}
+  end
+
   def route(%{method: "GET", path: "/wildthings"} = conv) do
     %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
@@ -190,6 +194,26 @@ IO.puts(response)
 
 request = """
 GET /bears?id=2 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+
+expected_response = """
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 20
+
+Bears, Lions, Tigers
+"""
+
+response = Survey.Handler.handle(request)
+
+IO.puts(response)
+
+request = """
+DELETE /bears?id=2 HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
