@@ -3,7 +3,7 @@ defmodule Survey.Handler do
   Handles HTTP requests.
   """
 
-  @pages_path Path.expand("../../pages", __DIR__)
+  @pages_path Path.expand("pages", File.cwd!)
 
   import Survey.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Survey.Parser, only: [parse: 1]
