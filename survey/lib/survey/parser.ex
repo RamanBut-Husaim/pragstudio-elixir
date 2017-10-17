@@ -1,4 +1,7 @@
 defmodule Survey.Parser do
+
+  alias Survey.Conv
+
   def parse(request) do
     [method, path, _] =
       request
@@ -6,11 +9,9 @@ defmodule Survey.Parser do
       |> List.first
       |> String.split(" ")
 
-    %{
+    %Conv{
       method: method,
-      path: path,
-      resp_body: "",
-      status: nil
+      path: path
     }
   end
 end
