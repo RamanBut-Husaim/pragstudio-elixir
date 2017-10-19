@@ -23,7 +23,7 @@ defmodule Survey.Plugins do
   def rewrite_path_captures(%Conv{} = conv, %{"thing" => thing, "id" => id}) do
     new_path = "/#{thing}/#{id}"
     Logger.info "rewriting '#{conv.path}' into '#{new_path}'"
-    %{ conv | path: new_path }
+    %Conv{ conv | path: new_path }
   end
 
   def rewrite_path_captures(%Conv{} = conv, nil), do: conv

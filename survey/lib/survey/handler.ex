@@ -26,21 +26,21 @@ defmodule Survey.Handler do
   end
 
   def emojify(%Conv{ status: 200, resp_body: resp_body } = conv) do
-    %{ conv | resp_body: "^___^\n #{resp_body} \n^___^"}
+    %Conv{ conv | resp_body: "^___^\n #{resp_body} \n^___^"}
   end
 
   def emojify(%Conv{} = conv), do: conv
 
   def route(%Conv{method: "DELETE", path: "/bears/" <> _id} = conv) do
-    %{ conv | status: 403, resp_body: "Bears must never be deleted!"}
+    %Conv{ conv | status: 403, resp_body: "Bears must never be deleted!"}
   end
 
   def route(%Conv{method: "GET", path: "/wildthings"} = conv) do
-    %{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
+    %Conv{ conv | status: 200, resp_body: "Bears, Lions, Tigers" }
   end
 
   def route(%Conv{method: "GET", path: "/bears"} = conv) do
-    %{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
+    %Conv{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
   end
 
   def route(%Conv{method: "GET", path: "/about"} = conv) do
@@ -58,11 +58,11 @@ defmodule Survey.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/bears/" <> id} = conv) do
-    %{ conv | status: 200, resp_body: "Bear #{id}" }
+    %Conv{ conv | status: 200, resp_body: "Bear #{id}" }
   end
 
   def route(%Conv{} = conv) do
-    %{ conv | status: 404, resp_body: "No #{conv.path} here!" }
+    %Conv{ conv | status: 404, resp_body: "No #{conv.path} here!" }
   end
 
   def format_response(%Conv{} = conv) do
