@@ -10,6 +10,7 @@ defmodule Survey.Handler do
   import Survey.FileHandler, only: [handle_file: 2]
 
   alias Survey.Conv
+  alias Survey.BearController
 
   @doc """
   Transforms the request into a response.
@@ -40,11 +41,11 @@ defmodule Survey.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/bears"} = conv) do
-    %Conv{ conv | status: 200, resp_body: "Teddy, Smokey, Paddington" }
+    BearController.index(conv)
   end
 
   def route(%Conv{method: "POST", path: "/bears"} = conv) do
-    %Conv{ conv | status: 201, resp_body: "Created a #{conv.params["type"]} bear named #{conv.params["name"]}!"}
+    BearController.create(conv, conv.params)
   end
 
   def route(%Conv{method: "GET", path: "/about"} = conv) do
@@ -62,7 +63,8 @@ defmodule Survey.Handler do
   end
 
   def route(%Conv{method: "GET", path: "/bears/" <> id} = conv) do
-    %Conv{ conv | status: 200, resp_body: "Bear #{id}" }
+    params = Map.put(conv.params, "id", id)
+    BearController.show(conv, params)
   end
 
   def route(%Conv{} = conv) do
