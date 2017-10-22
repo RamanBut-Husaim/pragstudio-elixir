@@ -29,13 +29,10 @@ defmodule Survey.Parser do
 
   defp parse_params(_, _), do: %{}
 
-  defp parse_headers(headers_lines), do: parse_headers(%{}, headers_lines)
-
-  defp parse_headers(headers, []), do: headers
-
-  defp parse_headers(headers, [header | other]) do
-    [key, value] = String.split(header, ": ")
-    headers = Map.put(headers, key, value)
-    parse_headers(headers, other)
+  defp parse_headers(header_lines) do
+    Enum.reduce(header_lines, %{}, fn(header, headers) ->
+      [key, value] = String.split(header, ": ")
+      Map.put(headers, key, value)
+    end)
   end
 end
