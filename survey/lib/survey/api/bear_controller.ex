@@ -6,6 +6,8 @@ defmodule Survey.Api.BearController do
       Survey.Wildthings.list_bears()
       |> Poison.encode!
 
-    %Conv{conv | status: 200, resp_content_type: "application/json", resp_body: json}
+    new_response_headers = Map.put(conv.resp_headers, "Content-Type", "application/json")
+
+    %Conv{conv | status: 200, resp_headers: new_response_headers, resp_body: json}
   end
 end
