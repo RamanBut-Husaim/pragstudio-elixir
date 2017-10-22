@@ -26,8 +26,6 @@ defmodule Survey.Handler do
     |> format_response
   end
 
-  def emojify(%Conv{} = conv), do: conv
-
   def route(%Conv{method: "DELETE", path: "/bears/" <> id} = conv) do
     params = Map.put(conv.params, "id", id)
     BearController.delete(conv, params)
@@ -77,9 +75,24 @@ defmodule Survey.Handler do
     BearController.show(conv, params)
   end
 
+  def route(%Conv{method: "GET", path: "/pages/" <> name} = conv) do
+    IO.inspect(name)
+    @pages_path
+    |> Path.join("#{name}.md")
+    |> File.read
+    |> handle_file(conv)
+    |> markdown_to_html
+  end
+
   def route(%Conv{} = conv) do
     %Conv{ conv | status: 404, resp_body: "No #{conv.path} here!" }
   end
+
+  defp markdown_to_html(%Conv{status: 200} = conv) do
+    %{ conv | resp_body: Earmark.as_html!(conv.resp_body) }
+  end
+
+  defp markdown_to_html(%Conv{} = conv), do: conv
 
   def put_content_length(%Conv{} = conv) do
     resp_headers = Map.put(conv.resp_headers, "Content-Length", byte_size(conv.resp_body))
