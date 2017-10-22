@@ -28,5 +28,10 @@ defmodule Survey.Plugins do
 
   def rewrite_path_captures(%Conv{} = conv, nil), do: conv
 
-  def log(%Conv{} = conv), do: IO.inspect(conv)
+  def log(%Conv{} = conv) do
+    if Mix.env == :dev do
+      IO.inspect(conv)
+    end
+    conv
+  end
 end

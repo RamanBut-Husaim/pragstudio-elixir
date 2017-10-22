@@ -21,13 +21,8 @@ defmodule Survey.Handler do
     |> rewrite_path
     |> log
     |> route
-    |> emojify
     |> track
     |> format_response
-  end
-
-  def emojify(%Conv{ status: 200, resp_body: resp_body } = conv) do
-    %Conv{ conv | resp_body: "^___^\n #{resp_body} \n^___^"}
   end
 
   def emojify(%Conv{} = conv), do: conv
@@ -35,6 +30,11 @@ defmodule Survey.Handler do
   def route(%Conv{method: "DELETE", path: "/bears/" <> id} = conv) do
     params = Map.put(conv.params, "id", id)
     BearController.delete(conv, params)
+  end
+
+  def route(%Conv{method: "GET", path: "/wildlife"} = conv) do
+    %Conv{conv | path: "/wildthings"}
+    |> route
   end
 
   def route(%Conv{method: "GET", path: "/wildthings"} = conv) do
@@ -74,190 +74,11 @@ defmodule Survey.Handler do
 
   def format_response(%Conv{} = conv) do
     """
-    HTTP/1.1 #{Conv.full_status(conv)}
-    Content-Type: text/html
-    Content-Length: #{byte_size(conv.resp_body)}
-
+    HTTP/1.1 #{Conv.full_status(conv)}\r
+    Content-Type: text/html\r
+    Content-Length: #{byte_size(conv.resp_body)}\r
+    \r
     #{conv.resp_body}
     """
   end
 end
-
-request = """
-GET /wildthings HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-GET /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-GET /bigfoot HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-GET /bears/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-GET /wildlife HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-GET /bears?id=2 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-DELETE /bears?id=2 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-expected_response = """
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 20
-
-Bears, Lions, Tigers
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts(response)
-
-request = """
-GET /about HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts response
-
-request = """
-GET /bears/new HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts response
-
-request = """
-POST /bears HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 21
-
-name=Baloo&type=Brown
-"""
-
-response = Survey.Handler.handle(request)
-
-IO.puts response
