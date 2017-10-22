@@ -50,6 +50,10 @@ defmodule Survey.Handler do
     Survey.Api.BearController.index(conv)
   end
 
+  def route(%Conv{method: "POST", path: "/api/bears"} = conv) do
+    Survey.Api.BearController.create(conv, conv.params)
+  end
+
   def route(%Conv{method: "POST", path: "/bears"} = conv) do
     BearController.create(conv, conv.params)
   end
