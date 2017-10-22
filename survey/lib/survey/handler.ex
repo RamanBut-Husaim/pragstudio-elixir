@@ -22,6 +22,7 @@ defmodule Survey.Handler do
     |> log
     |> route
     |> track
+    |> put_content_length
     |> format_response
   end
 
@@ -76,11 +77,17 @@ defmodule Survey.Handler do
     %Conv{ conv | status: 404, resp_body: "No #{conv.path} here!" }
   end
 
+  def put_content_length(%Conv{} = conv) do
+    resp_headers = Map.put(conv.resp_headers, "Content-Length", byte_size(conv.resp_body))
+
+    %Conv{ conv | resp_headers: resp_headers}
+  end
+
   def format_response(%Conv{} = conv) do
     """
     HTTP/1.1 #{Conv.full_status(conv)}\r
     Content-Type: #{conv.resp_headers["Content-Type"]}\r
-    Content-Length: #{byte_size(conv.resp_body)}\r
+    Content-Length: #{conv.resp_headers["Content-Length"]}\r
     \r
     #{conv.resp_body}
     """
