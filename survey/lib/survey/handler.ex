@@ -8,6 +8,7 @@ defmodule Survey.Handler do
   import Survey.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Survey.Parser, only: [parse: 1]
   import Survey.FileHandler, only: [handle_file: 2]
+  import Survey.View, only: [render: 3]
 
   alias Survey.Conv
   alias Survey.BearController
@@ -37,7 +38,7 @@ defmodule Survey.Handler do
 
     where_is_bigfoot = Task.await(task)
 
-    %Conv{ conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot}}
+    render(conv, "sensors.eex", snapshots: snapshots, location: where_is_bigfoot)
   end
 
   def route(%Conv{method: "GET", path: "/kaboom" }) do
