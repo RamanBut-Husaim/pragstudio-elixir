@@ -8,6 +8,7 @@ defmodule Survey.HttpServer do
       # Creates a socket to listen for client connections.
       # `listen_socket` is bound to the listening socket.
       listen_options = [:binary, backlog: 10, packet: :raw, active: false, reuseaddr: true]
+
       {:ok, listen_socket} = :gen_tcp.listen(port, listen_options)
 
       # Socket options (don't worry about these details):
