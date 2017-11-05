@@ -1,0 +1,30 @@
+defmodule HttpServerTest do
+  use ExUnit.Case, async: true
+
+  alias Survey.HttpServer
+  alias Survey.HttpClient
+
+  @server_port 4000
+
+  test "accepts a request on a socket and sends back a response" do
+    spawn(HttpServer, :start, [@server_port])
+
+    request = """
+    GET /wildthings HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
+    """
+
+    response = HttpClient.send(@server_port, request)
+
+    assert response == """
+    HTTP/1.1 200 OK\r
+    Content-Type: text/html\r
+    Content-Length: 20\r
+    \r
+    Bears, Lions, Tigers
+    """
+  end
+end
