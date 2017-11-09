@@ -28,6 +28,14 @@ defmodule Survey.Handler do
     |> format_response
   end
 
+  def route(%Conv{method: "POST", path: "/pledges"} = conv) do
+    Survey.PledgeController.create(conv, conv.params)
+  end
+
+  def route(%Conv{method: "GET", path: "/pledges"} = conv) do
+    Survey.PledgeController.index(conv)
+  end
+
   def route(%Conv{ method: "GET", path: "/sensors" } = conv) do
     task = Task.async(fn -> Survey.Tracker.get_location("bigfoot") end)
 
