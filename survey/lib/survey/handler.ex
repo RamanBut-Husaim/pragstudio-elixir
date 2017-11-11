@@ -13,6 +13,7 @@ defmodule Survey.Handler do
   alias Survey.Conv
   alias Survey.BearController
   alias Survey.VideoCam
+  alias Survey.FourOhFourCounter, as: Counter
 
   @doc """
   Transforms the request into a response.
@@ -26,6 +27,11 @@ defmodule Survey.Handler do
     |> track
     |> put_content_length
     |> format_response
+  end
+
+  def route(%Conv{method: "GET", path: "/404s"} = conv) do
+    counts = Counter.get_counts()
+    %Conv{ conv | status: 200, resp_body: inspect counts }
   end
 
   def route(%Conv{method: "POST", path: "/pledges"} = conv) do

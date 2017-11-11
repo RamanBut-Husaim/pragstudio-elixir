@@ -6,9 +6,11 @@ defmodule Survey.Plugins do
   require Logger
 
   alias Survey.Conv
+  alias Survey.FourOhFourCounter, as: Counter
 
   def track(%Conv{status: 404, path: path} = conv) do
     Logger.warn "#{path} is on the loose!"
+    Counter.bump_count(path)
     conv
   end
 
