@@ -2,65 +2,50 @@ defmodule Survey.FourOhFourCounter do
 
   require Logger
 
+  alias Survey.GenericServer
+
   @name :four_oh_four_counter_server
 
   def start() do
     Logger.info "starting the 404 counter server..."
-    pid = spawn(__MODULE__, :listen_loop, [%{}])
-    Process.register(pid, @name)
-    pid
+    GenericServer.start(__MODULE__, %{}, @name)
   end
 
   def bump_count(path) when is_binary(path) do
-    send @name, {self(), :bump_count, path}
-
-    receive do
-      {:response, counter} -> counter
-    end
+    GenericServer.call @name, {:bump_count, path}
   end
 
   def get_count(path) when is_binary(path) do
-    send @name, {self(), :get_count, path}
-
-    receive do
-      {:response, :ok, counter} -> counter
-      {:response, :error, message} -> message
-    end
+    GenericServer.call @name, {:get_count, path}
   end
 
   def get_counts() do
-    send @name, {self(), :get_counts}
-
-    receive do
-      {:response, counts} -> counts
-    end
+    GenericServer.call @name, :get_counts
   end
 
-  def listen_loop(state) do
-    receive do
-      {sender, :bump_count, path} ->
-        counter = Map.get(state, path, 0)
-        new_state = Map.put(state, path, counter + 1)
-        Logger.debug "incrementing count for `#{path}` with value `#{counter}`"
-        send sender, {:response, counter + 1}
-        listen_loop(new_state)
-      {sender, :get_count, path} ->
-        case Map.get(state, path) do
-          nil ->
-            Logger.debug "there is no count saved for `#{path}`"
-            send sender, {:response, :error, "no path specified"}
-          val ->
-            Logger.debug "the value for the `#{path}` is `#{val}`"
-            send sender, {:response, :ok, val}
-        end
-        listen_loop(state)
-      {sender, :get_counts} ->
-        Logger.debug "returning the whole state"
-        send sender, {:response, state}
-        listen_loop(state)
-      unexpected ->
-        Logger.info "unexpected messaged: #{inspect unexpected}"
-        listen_loop(state)
-    end
+  def reset() do
+    GenericServer.cast @name, :reset
+  end
+
+  def handle_call({:bump_count, path}, state) do
+    counter = Map.get(state, path, 0)
+    new_state = Map.put(state, path, counter + 1)
+    Logger.debug "incrementing count for `#{path}` with value `#{counter}`"
+    {counter + 1, new_state}
+  end
+
+  def handle_call({:get_count, path}, state) do
+    counter = Map.get(state, path, 0)
+    {counter, state}
+  end
+
+  def handle_call(:get_counts, state) do
+    Logger.debug "returning the whole state"
+    {state, state}
+  end
+
+  def handle_cast(:reset, _state) do
+    Logger.debug "resetting state"
+    %{}
   end
 end

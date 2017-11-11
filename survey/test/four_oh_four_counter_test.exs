@@ -17,6 +17,8 @@ defmodule FourOhFourCounterTest do
 
     assert Counter.get_counts == %{"/bigfoot" => 2, "/nessie" => 3}
 
+    Counter.reset()
+
     Process.exit(pid, :kill)
   end
 end
