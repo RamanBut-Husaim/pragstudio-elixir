@@ -3,6 +3,7 @@ defmodule Survey.PledgeServer do
   require Logger
 
   @name :pledge_server
+  @pledge_endpoint "https://httparrot.herokuapp.com/post"
 
   def start() do
     Logger.info "starting the pledge server..."
@@ -59,9 +60,18 @@ defmodule Survey.PledgeServer do
     end
   end
 
-  defp send_pledge(_name, _amount) do
+  defp send_pledge(name, amount) do
     # CODE GOES HERE TO SEND TO EXTERNAL SERVER
-    {:ok, "pledge-#{:rand.uniform(1000)}"}
+    pledge = ~s({"name" : #{name}, "amount": #{amount}})
+    headers = [{"Content-Type", "application/json"}]
+    case HTTPoison.post @pledge_endpoint, pledge, headers do
+      {:ok, _response} ->
+        Logger.debug "the pledge creation has been performed successfully"
+        {:ok, "pledge-#{:rand.uniform(1000)}"}
+      {:error, reason} ->
+        Logger.debug "the pledge creation failed with reasong #{reason}"
+        {:error, reason}
+    end
   end
 end
 
