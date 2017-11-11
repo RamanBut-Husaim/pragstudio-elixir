@@ -4,7 +4,7 @@ defmodule FourOhFourCounterTest do
   alias Survey.FourOhFourCounter, as: Counter
 
   test "reports counts of missing path requests" do
-    pid = Counter.start()
+    {:ok, pid} = Counter.start()
 
     Counter.bump_count("/bigfoot")
     Counter.bump_count("/nessie")

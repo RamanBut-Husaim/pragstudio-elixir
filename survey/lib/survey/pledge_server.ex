@@ -67,7 +67,9 @@ defmodule Survey.PledgeServer do
   end
 
   def handle_cast({:set_cache_dize, size}, state) do
-    {:noreply, %State{ state | cache_size: size}}
+    resized_cache = Enum.take(state.pledges, size)
+    new_state = %State{state | cache_size: size, pledges: resized_cache}
+    {:noreply, new_state}
   end
 
   def handle_info(message, state) do

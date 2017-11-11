@@ -60,7 +60,7 @@ defmodule HandlerTest do
   end
 
   test "GET /bigfoot" do
-    pid = Counter.start()
+    {:ok, pid} = Counter.start()
 
     request = """
     GET /bigfoot HTTP/1.1\r
