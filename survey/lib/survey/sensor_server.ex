@@ -6,7 +6,7 @@ defmodule Survey.SensorServer do
   @name :sensor_server
 
   defmodule State do
-    defstruct sensor_data: %{}, refresh_interval: :timer.seconds(5)
+    defstruct sensor_data: %{}, refresh_interval: :timer.minutes(5)
   end
 
   def start_link(_arg) do

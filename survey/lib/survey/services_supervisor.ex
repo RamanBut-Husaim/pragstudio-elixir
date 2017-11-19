@@ -5,7 +5,7 @@ defmodule Survey.ServicesSupervisor do
 
   @name __MODULE__
 
-  def start_link() do
+  def start_link(_arg) do
     Logger.info "starting the services supervisor..."
     Supervisor.start_link(__MODULE__, :ok, name: @name)
   end

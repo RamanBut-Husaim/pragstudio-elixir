@@ -5,10 +5,10 @@ defmodule Survey.KickStarter do
 
   @name __MODULE__
 
-  def start() do
+  def start_link(_arg) do
     Logger.info "starting the kickstarter"
 
-    GenServer.start(__MODULE__, :ok, name: @name)
+    GenServer.start_link(__MODULE__, :ok, name: @name)
   end
 
   def init(_state) do
