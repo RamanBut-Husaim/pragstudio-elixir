@@ -1,18 +1,10 @@
 defmodule Survey do
-  @moduledoc """
-  Documentation for Survey.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  require Logger
 
-  ## Examples
-
-      iex> Survey.hello
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    Logger.info "starting the application..."
+    Survey.Supervisor.start_link()
   end
 end

@@ -4,6 +4,7 @@ defmodule Survey.Mixfile do
   def project do
     [
       app: :survey,
+      description: "A humble Http server",
       version: "0.1.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
@@ -14,7 +15,9 @@ defmodule Survey.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {Survey, []},
+      env: [port: 3000]
     ]
   end
 
