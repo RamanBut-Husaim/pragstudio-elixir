@@ -4,7 +4,7 @@ defmodule PledgeServerTest do
   alias Survey.PledgeServer
 
   test "caches the 3 most recent pledges and totals their amounts" do
-    PledgeServer.start()
+    PledgeServer.start_link(:ok)
 
     PledgeServer.create_pledge("frodo", 100)
     PledgeServer.create_pledge("sam", 200)
