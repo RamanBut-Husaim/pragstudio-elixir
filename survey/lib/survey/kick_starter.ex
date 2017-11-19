@@ -3,10 +3,12 @@ defmodule Survey.KickStarter do
 
   require Logger
 
+  @name __MODULE__
+
   def start() do
     Logger.info "starting the kickstarter"
 
-    GenServer.start(__MODULE__, :ok, name: __MODULE__)
+    GenServer.start(__MODULE__, :ok, name: @name)
   end
 
   def init(_state) do
@@ -15,10 +17,18 @@ defmodule Survey.KickStarter do
     {:ok, server_pid}
   end
 
+  def get_server() do
+    GenServer.call @name, :get_server
+  end
+
   def handle_info({:EXIT, pid, reason}, _state) do
     Logger.warn "httpserver process `#{inspect pid}` exited with reason `#{inspect reason}`"
     server_pid = start_server()
     {:noreply, server_pid}
+  end
+
+  def handle_call(:get_server, _from, state) do
+    {:reply, state, state}
   end
 
   defp start_server() do
