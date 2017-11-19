@@ -11,9 +11,9 @@ defmodule Survey.PledgeServer do
   @name :pledge_server
   @pledge_endpoint "https://httparrot.herokuapp.com/post"
 
-  def start() do
+  def start_link(_arg) do
     Logger.info "starting the pledge server..."
-    GenServer.start(__MODULE__, %State{}, name: @name)
+    GenServer.start_link(__MODULE__, %State{}, name: @name)
   end
 
   def create_pledge(name, amount) do
