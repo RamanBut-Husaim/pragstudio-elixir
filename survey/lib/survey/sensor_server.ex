@@ -9,9 +9,10 @@ defmodule Survey.SensorServer do
     defstruct sensor_data: %{}, refresh_interval: :timer.minutes(5)
   end
 
-  def start_link(_arg) do
-    Logger.info "starting the sensor server..."
-    GenServer.start_link(__MODULE__, %State{}, name: @name)
+  def start_link(interval) do
+    Logger.info "starting the sensor server with #{interval} min refresh..."
+    initial_state = %State{ refresh_interval: interval }
+    GenServer.start_link(__MODULE__, initial_state, name: @name)
   end
 
   def get_sensor_data() do

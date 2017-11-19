@@ -13,7 +13,8 @@ defmodule Survey.ServicesSupervisor do
   def init(:ok) do
     children = [
       Survey.PledgeServer,
-      Survey.SensorServer
+      { Survey.SensorServer, :timer.minutes(60) },
+      Survey.FourOhFourCounter
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

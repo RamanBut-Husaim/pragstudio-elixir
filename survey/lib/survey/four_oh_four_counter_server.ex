@@ -1,14 +1,13 @@
 defmodule Survey.FourOhFourCounter do
+  use GenServer
 
   require Logger
 
-  use GenServer
-
   @name :four_oh_four_counter_server
 
-  def start() do
+  def start_link(_arg) do
     Logger.info "starting the 404 counter server..."
-    GenServer.start(__MODULE__, %{}, name: @name)
+    GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
   def bump_count(path) when is_binary(path) do
